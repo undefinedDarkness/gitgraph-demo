@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="./aaaaa.css" />
+    <script src="./graph.js"></script>
+</head>
+
+<body>
+    <div style="display: flex;">
+        
+        <div id="content" style="min-height: 100vh; flex: calc(1/4); border-right: 1px solid;">
+            <div style="padding: 1em">
+            <details style="white-space: pre-line;" closed>
+                <summary>Documentation</summary>
+                NOTE: A branch with no commits won't be displayed in the tree
+                git branch NAME - Create a new git branch
+                git checkout NAME - Switch from current branch to this new branch
+                git commit MESSAGE... - Commit changes
+                git add FILENAME... - Add files to staging
+                git merge BRANCHNAME - Merge BRANCHNAME with it's parent (Don't use with master)
+                git merge A B - Merge A into B
+                git restore FILENAME - Undo all file changes
+                git rm FILENAME - Unstage file from Git
+                <hr>
+                flush-untracked - Flush untracked changes (DEV/WIP)
+                touch - Create a file
+                rm - Remove a file (WIP)
+                ls - List files
+            </details>
+            
+            <p>NOTE: Branches with no commits won't be displayed!</p>
+
+            <ul class="testcases">
+                <li><button onclick="testcase(1)">Run</button> - Have >= 3 commits in the current branch</li>
+                <li><button onclick="testcase(2)">Run</button> - Have a branch named "crow" from the current branch that has 5 commits</li>
+                <!-- <li></li> -->
+            </ul>
+
+            <!-- This does not do everything temporally unfortunatley, but I feel that's a problem for another day!
+            Example if you modify a file, add it then modify it again but don't add the new change it will get added anyway! <br> -->
+            <!-- TODO: Trigger this on pressing enter -->
+            <div class="submission">
+                <input type="text" id="command-input" onkeypress="if (event.keyCode == 13) submitCommand()" />
+                <button id="command-input-submit" onclick="submitCommand()">&gt;</button>
+            </div>
+
+            <div id="error-box"></div>
+            <pre>
+                <div id="output-box"></div>
+            </pre>
+            </div>
+        </div>
+
+        <div style="max-height: 100vh; overflow-y: scroll; flex: calc(3/4);" id="git-graph"></div>
+    </div>
+        <!-- Load the JS file -->
+        <!-- <script src="https://cdn.jsdelivr.net/npm/@gitgraph/js"></script> -->
+        <script src="./aaaa.js"></script>
+</body>
+
+</html>
