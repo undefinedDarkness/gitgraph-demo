@@ -15,12 +15,20 @@ body,html {
 }
 
 .testcases button {
-    background-color: skyblue;
-    border-radius: 4px;
-    border: none;
-    padding: 0.1em 0.5em;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background-color: inherit;
+    padding: 0.3em 0.5em;
     font-size: 1.1em;
+    color: #f0f0f0;
     font-family: inherit;
+    cursor: pointer;
+    transition: all cubic-bezier(0.075, 0.82, 0.165, 1) 0.5s;
+}
+
+.testcases button:hover {
+    background-color: #ccc;
+    color: #111;
 }
 
 .testcases > li:not(:first-child) {
@@ -41,11 +49,7 @@ body,html {
         monospace;
 }
 
-.submission input {
-    width: 90%;
-    min-height: 3em;
-    padding: 0 1em;
-    font-size: 1.5em;
+input {
     font-family: var(--monospace);
 }
 
@@ -54,11 +58,13 @@ body,html {
     border: none;
     font-size: 1.5em;
     background-color: skyblue;
+    color: white;
 }
 
-pre {
+pre,.mono {
     font-family: var(--monospace);
 }
+
 
 #error-box button {
     float: right;
@@ -78,3 +84,37 @@ pre {
     /* background: color-mix(in srgb,  percentage, color percentage) */
 }
 
+.split {
+    display: flex;
+    flex-direction: row;
+}
+
+.gutter {
+    /* background-color: #eee; */
+    background-repeat: no-repeat;
+    background-position: 50%;
+}
+
+.gutter.gutter-horizontal {
+    /* background-image: url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAUAAAAeCAYAAADkftS9AAAAIklEQVQoU2M4c+bMfxAGAgYYmwGrIIiDjrELjpo5aiZeMwF+yNnOs5KSvgAAAABJRU5ErkJggg=='); */
+    cursor: col-resize;
+}
+
+dl {
+    display: grid;
+    margin: 0;
+}
+
+dt {
+    margin-top: 1em;
+}
+
+#prompt {
+    animation: blink 1s step-start infinite; 
+}
+
+@keyframes blink {
+    50% {
+        opacity: 0;
+    }
+}

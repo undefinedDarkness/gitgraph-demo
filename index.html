@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="./assets/styles.css" />
+</head>
+
+<body>
+    <div class="split" style="min-height: 100vh;">
+        
+        <div id="content" class="mono" style="display: flex; flex-direction: column; font-size:1em; border-right: 1px dashed gray;">
+            <div style="padding: 1em; border-bottom: 1px dashed gray;">
+            <details style="white-space: pre-line;" closed>
+                <summary style="font-style: bold; font-size: 1.4em;">Documentation</summary>
+                NOTE:
+                A branch with no commits won't be displayed in the tree
+                <dl>
+                    <dt>git branch NAME</dt>
+                    <dd>Create a new git branch</dd>
+                    <dt>git checkout NAME</dt>
+                    <dd>Switch from current branch to this new branch</dd>
+                    <dt>git commit MESSAGE...</dt>
+                    <dd>Commit changes</dd>
+                    <dt>git add FILENAME...</dt>
+                    <dd>Add files to staging</dd>
+                    <dt>git merge BRANCHNAME</dt>
+                    <dd>Merge BRANCHNAME with its parent (Don't use with master)</dd>
+                    <dt>git merge A B</dt>
+                    <dd>Merge A into B</dd>
+                    <dt>git restore FILENAME</dt>
+                    <dd>Undo all file changes</dd>
+                    <dt>git rm FILENAME</dt>
+                    <dd>Unstage file from Git</dd>
+
+                    <dt>flush-untracked</dt>
+                    <dd>Flush untracked changes (DEV/WIP)</dd>
+                  
+                    <dt>touch</dt>
+                    <dd>Create a file</dd>
+                  
+                    <dt>rm</dt>
+                    <dd>Remove a file (WIP)</dd>
+                  
+                    <dt>ls</dt>
+                    <dd>List files</dd>
+
+                    <dt>testcase INDEX</dt>
+                    <dd>Run testcase with INDEX (Normal indexing)</dd>
+                  </dl>
+            </details>
+            
+            <p>NOTE: Branches with no commits won't be displayed!</p>
+
+            <ul class="testcases" style="list-style-type: none; padding-left: 0;">
+                <li><button onclick="testcase(1)">Run</button> - Have >= 3 commits in the current branch</li>
+                <li><button onclick="testcase(2)">Run</button> - Have a branch named "crow" from the current branch that has 5 commits</li>
+                <!-- <li></li> -->
+            </ul>
+
+            <!-- This does not do everything temporally unfortunatley, but I feel that's a problem for another day!
+            Example if you modify a file, add it then modify it again but don't add the new change it will get added anyway! <br> -->
+            <!-- TODO: Trigger this on pressing enter -->
+            <!-- <div class="submission">
+                <input type="text" id="command-input" onkeypress="if (event.keyCode == 13) submitCommand()" />
+                <button id="command-input-submit" onclick="submitCommand()">&gt;</button>
+            </div>
+
+            <div id="error-box"></div>
+            <pre>
+                <div id="output-box"></div>
+            </pre> -->
+            </div>
+            <div style="display: flex; flex-direction: column; flex: 1;">
+                <div style="display: grid; flex: 1; overflow-x: auto; padding-top: 8px;"><pre style="overflow: auto; margin: 0;" id="output-box"></pre></div>
+                <div style="display: flex; flex-direction: row; gap: 0.5em; width: 100%; border-top: 1px dashed gray; ">
+                    <!-- <span id="prompt">=> </span> -->
+                    <input placeholder="Input your command here" spellcheck="false" class="mono" style="padding:8px; font-size: 1.3em; flex: 1; border: 0; color: white; outline: 0; background: inherit;" type="text" id="command-input" onkeypress="if (event.keyCode == 13) submitCommand()" />
+                </div>
+            </div>
+        </div>
+
+        <div id="git-graph" style="color: #fff;"></div>
+    </div>
+        <!-- Load the JS file -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/split.js/1.6.0/split.min.js"></script>
+        <script src="./graph.js" defer></script>
+        <script src="./app.js" defer></script>
+</body>
+
+</html>

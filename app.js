@@ -23,11 +23,28 @@ const manipulate = {
 
 // Init State & Links
 const gitgraph = GitgraphJS.createGitgraph($("#git-graph"), {
-    author: "You <you@you.mail>"
+    author: "You <you@you.mail>",
+    orientation: "vertical-reverse",
+    template: GitgraphJS.templateExtend("blackarrow", {
+        colors: ['hotpink', 'steelblue'],
+        arrow: {
+            color: `white`
+        },
+        branch: {
+            mergeStyle: 'straight',
+            color: 'white'
+        },
+        commit: {
+            message: {
+                font: "normal 1em system-ui",
+                color: 'white'
+            }
+        }
+    })
 });
 // const master = gitgraph.branch("master");
 function printChange(v) {
-    return `${v.type} ${v.file}`
+    return `\t- ${v.type} ${v.file}`
 }
 
 // let currentBranch = master;
@@ -148,26 +165,23 @@ scratch.newBranch("master");
 scratch["master"].doDummyCommit()
 let currentBranch = scratch['master'];
 
-const errorBox = {
-    id: '#error-box',
-    clear() {
-        $(this.id).innerHTML = '';
-    },
 
-    report(v) {
-        $(this.id).innerHTML = v + `<button onclick="$('#error-box').innerHTML = ''">X</button>`;
-    }
-}
 
 const outputBox = {
     id: '#output-box',
+    // idx: 0,
     clear() {
         $(this.id).innerHTML = '';
     },
 
-    report(v) {
-        $(this.id).innerHTML = v;
-    }
+    report(v, color = undefined) {
+        // if (color)
+        $(this.id).innerHTML += `> ${!!color ? `<span style="color: ${color}">${v}</span>` : v}\n`;
+    },
+
+    err (v) {
+        this.report(v, 'tomato'); // $(this.id).innerHTML += `> <span style="color: tomato">${v}</span>\n`
+    }  
 }
 
 function showStatus() {
@@ -193,7 +207,7 @@ function doBranch(parts) {
             outputBox.report(`Created branch ${args[0]}`)
             scratch[args[0]].doDummyCommit()
         } else {
-            errorBox.report(`Failed to create branch ${args[0]}, likely another branch with the same name already exists`)
+            outputBox.err(`Failed to create branch ${args[0]}, likely another branch with the same name already exists`)
         }
     }
 }
@@ -211,18 +225,29 @@ function doLS() {
 
 function doTouch(parts) {
     if (parts.length < 2) {
-        errorBox.report('Not enough arguments, Need 2 arguments, Example: touch FILENAME');
+        outputBox.err('Not enough arguments, Need 1 arguments, Example: touch FILENAME');
         return;
     }
 
     const filename = parts[1];
     currentBranch.addFile(filename);
-    outputBox.report(`Added file ${filename} sucessfully.`)
+    outputBox.report(`Created file ${filename} sucessfully.`)
+}
+
+function doTestcase(parts) {
+    if (parts.length < 2) {
+        outputBox.err('Not enough arguments, Need 1 arguments, Example: testcase IDX');
+        return;
+    }
+
+    const idx = parseInt(parts[1]);
+    testcase(idx)
+    
 }
 
 function doRM(parts) {
     if (parts.length < 2) {
-        errorBox.report('Not enough arguments, Need 2 arguments, Example: rm FILENAME');
+        outputBox.err('Not enough arguments, Need 2 arguments, Example: rm FILENAME');
         return;
     }
 
@@ -233,7 +258,7 @@ function doRM(parts) {
 
 function doAdd(parts) {
     if (parts.length < 3) {
-        errorBox.report('Not enough arguments, Need atleast 2 arguments, Example: git add FILENAME');
+        outputBox.err('Not enough arguments, Need atleast 2 arguments, Example: git add FILENAME');
         return;
     }
 
@@ -248,18 +273,19 @@ function doAdd(parts) {
 
 function doCommit(parts) {
     if (parts.length < 3) {
-        errorBox.report('Not enough arguments, Need atleast 2 arguments, Example: git commit "MESSAGE"')
+        outputBox.err('Not enough arguments, Need atleast 2 arguments, Example: git commit "MESSAGE"')
         return;
     }
 
     const message = parts.slice(2).join(' ');
     currentBranch.commit(message)
+    outputBox.report(`Committed changes with message: ${message}`)
 }
 
 function doCheckout(parts) {
     if (parts.length != 3) {
-        errorBox.report(`Invalid no of arguments, Example: git checkout BRANCHNAME
-        Hint: You can find all branches with <git branch>`)
+        outputBox.err(`Invalid no of arguments, Example: git checkout BRANCHNAME
+        Hint: You can find all branches with \`git branch\``)
         return;
     }
 
@@ -267,7 +293,7 @@ function doCheckout(parts) {
         currentBranch = scratch[parts[2]]
         outputBox.report(`Checked out ${parts[2]}`)
     } else {
-        errorBox.report(`Branch ${parts[2]} does not exist`)
+        outputBox.err(`Branch ${parts[2]} does not exist`)
     }
 }
 
@@ -279,7 +305,7 @@ function doMerge(parts) {
                              git merge CHILD PARENT - Will merge child into parent`
     if (args.length == 0) {
         pp('cp1')
-        errorBox.report('Not enough arguments' + help)
+        outputBox.err('Not enough arguments' + help)
         return;
     } else if (args.length == 1) {
         if (scratch.branches.has(args[0])) {
@@ -292,7 +318,7 @@ function doMerge(parts) {
             // outputBox.report(`Checked out ${args[0]}`)
         } else {
             pp('cp22')
-            errorBox.report(`Branch ${args[0]} does not exist` + help)
+            outputBox.err(`Branch ${args[0]} does not exist` + help)
             return;
         }
     } else if (args.length == 2) {
@@ -304,7 +330,7 @@ function doMerge(parts) {
             outputBox.report(`Merged ${args[0]} into ${parent.gg.name}`)
         } else {
             pp('cp32')
-            errorBox.report(`Branch ${args[0]} does not exist` + help)
+            outputBox.err(`Branch ${args[0]} does not exist` + help)
             return;
         }
     }
@@ -313,7 +339,7 @@ function doMerge(parts) {
 function doGitRM(parts) {
     const args = parts.slice(2)
     if (args.length == 0) {
-        errorBox.report('Not enough arguments')
+        outputBox.err('Not enough arguments')
         return;
     }
     let vs = "Unstaged the following:\n"
@@ -341,9 +367,9 @@ function testcase(v) {
     console.log(manipulate.allCommitsInBranch())
     const result = cases[parseInt(v) - 1]();
     if (result) {
-        outputBox.report(`Testcase ${v} passed`)
+        outputBox.report(`Testcase ${v} passed`, 'yellowgreen')
     } else {
-        outputBox.report(`Testcase ${v} failed`)
+        outputBox.report(`Testcase ${v} failed`, `tomato`)
     }
 }
 
@@ -356,6 +382,9 @@ function submitCommand() {
     const parts = command.toLowerCase().trim().split(' ');
 
     switch (parts[0]) {
+        case "testcase":
+            doTestcase(parts);
+            return;
         case "touch":
             doTouch(parts);
             return;
@@ -373,7 +402,7 @@ function submitCommand() {
     }
 
     if (parts.length == 1) {
-        errorBox.report('Not enough arguments');
+        outputBox.err('Not enough arguments');
         return;
     }
 
@@ -403,9 +432,9 @@ function submitCommand() {
             doGitRM(parts);
             break;
         default:
-            errorBox.report("unknown git command")
+            outputBox.err("unknown git command")
             // console.log(`Unknown subcommand.`)
-            return;
+            break;
         // case "rm":
         //     doRemove(parts);
         //     break;
@@ -415,7 +444,12 @@ function submitCommand() {
         // case "push":
         //     doPush(parts);
         //     break;
+        $("#command-input").value = ''
     }
 
-    $("#command-input").value = "";
+    
 }
+
+Split([ '#content', '#git-graph' ], {
+    sizes: [25, 75]
+})
